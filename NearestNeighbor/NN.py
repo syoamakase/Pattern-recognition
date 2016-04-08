@@ -6,7 +6,7 @@ import numpy as np
 #nearest neighbor rule(NN rule)
 class NN():
 	#define k-NN(default is 1-NN)
-	def __init__(self,kNNi=1,data,class_data):
+	def __init__(self,kNN,data,class_data):
 		self.kNN        = kNN
 		self.data       = data
 		self.class_data = class_data
@@ -45,14 +45,11 @@ class file_operator():
 	def getData(self):
 		return self.data,self.class_data
 
-#main
-def main():	
+
+
+if __name__== "__main__":
 	print "dataload"
 	fope       = file_operator("iris.data")
 	data,class_data = fope.getData()
 	nN = NN(51,data,class_data) 
 	nN.ranking(data[0],class_data[0])
-
-
-if __name__== "__main__":
-	main()
