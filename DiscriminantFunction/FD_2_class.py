@@ -2,6 +2,8 @@
 #-*- coding:utf-8 -*-
 
 import numpy as np
+import copy
+import json
 
 row = 0.03
 #Discriminant function rule
@@ -12,6 +14,9 @@ class DF():
 		self.data          = data
 		self.class_data    = class_data
 		self.weight        = np.ones((2),dtype=np.float32)
+		with open('data.json','w') as f:
+			pass
+
 
 	#calclate distance
 	## g(x) = g_1(x) - g_2(x)
@@ -39,13 +44,18 @@ class DF():
 			return 0
 
 	def learning_loop(self,data,class_data):
+		prev_weight = copy.deepcopy(self.weight)
 		for loop in range(15):
 			for i in range(len(data)):
 				judge =  self.g_x(data[i])
 				error_id = self.error_judgement(judge,class_data[i])
 				self.error_correction(error_id,data[i])
-				#print "judge : {} class : {}".format(judge,class_data[i])
-				print self.weight
+				if np.all(self.weight == prev_weight) == False:
+					#print "judge : {} class : {}".format(judge,class_data[i])
+					print "weight: {}".format(self.weight)
+					prev_weight = copy.deepcopy(self.weight)
+					with open('data.json','a') as f:			
+						json.dump(self.weight.tolist(),f,sort_keys=True,indent=4)
 
 class file_operator():
 	def __init__(self,filename):
