@@ -3,7 +3,8 @@
 
 import numpy as np
 import copy
-import json
+import matplotlib.pyplot as plt
+from matplotlib import lines
 
 row = 0.03
 #Discriminant function rule
@@ -45,6 +46,7 @@ class DF():
 
 	def learning_loop(self,data,class_data):
 		prev_weight = copy.deepcopy(self.weight)
+		graph = graph_generator(1,self.weight)
 		for loop in range(15):
 			for i in range(len(data)):
 				judge =  self.g_x(data[i])
@@ -54,8 +56,7 @@ class DF():
 					#print "judge : {} class : {}".format(judge,class_data[i])
 					print "weight: {}".format(self.weight)
 					prev_weight = copy.deepcopy(self.weight)
-					with open('data.json','a') as f:			
-						json.dump(self.weight.tolist(),f,sort_keys=True,indent=4)
+					graph.graph_gen(self.weight)
 
 class file_operator():
 	def __init__(self,filename):
@@ -65,6 +66,21 @@ class file_operator():
 				
 	def getData(self):
 		return self.__data , self.__class_data
+
+class graph_generator():
+		def __init__(self,sleep,data):
+			self.__sleep = sleep
+			self.fig, self.ax = plt.subplots(1,1)
+			self.zero = np.zeros(2)
+			plt.xlim(0,0.5)
+			plt.ylim(0,1.2)
+			self.lines, = self.ax.plot([0,data[0]],[0,data[1]])
+			self.ax.plot([0,1],[0,2])
+			self.ax.plot([0,1],[0,5])
+
+		def graph_gen(self,data):
+			self.lines.set_data([0,data[0]],[0,data[1]])
+			plt.pause(self.__sleep)
 
 if __name__== "__main__":
 	print "dataload"
