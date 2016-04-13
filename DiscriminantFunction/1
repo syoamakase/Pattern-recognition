@@ -57,8 +57,8 @@ class DF():
 				error_id = self.error_judgement(judge,class_data[i])
 				self.error_correction(error_id,data[i])
 				if np.all(self.weight == prev_weight) == False:
-					#print("judge : {} class : {}".format(judge,class_data[i]))
-					print("weight: {}".format(self.weight))
+					#print "judge : {} class : {}".format(judge,class_data[i])
+					print "weight: {}".format(self.weight)
 					prev_weight = copy.deepcopy(self.weight)
 					graph.graph_gen(self.weight)
 
@@ -87,9 +87,9 @@ class graph_generator():
 			plt.pause(self.__sleep)
 
 if __name__== "__main__":
-	print("dataload")
+	print "dataload"
 	fope = file_operator("2_class.data")
 	data,class_data = fope.getData()
-	print("learning start")
+	print "learning start"
 	df = DF(data,class_data)
 	df.learning_loop(data,class_data)
