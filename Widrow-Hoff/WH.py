@@ -23,7 +23,8 @@ class WH():
 
 class file_operator():
 	def __init__(self,filename):
-		data = np.genfromtxt(filename,delimiter=",",dtype=np.float32,usecol(0)
+		self.__data        = np.genfromtxt(filename,delimiter=",",dtype=np.float32,usecol=(0))
+		self.__class_data  = np.genfromtxt(filename,delimeter=",",dtype=np.float32,usecol=(1))
 
 	def getData(self):
 		pass
