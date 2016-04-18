@@ -11,10 +11,8 @@ EPOCH = 100
 
 class WH():
 	# c means weight length
-	def __init__(self,c,data,class_data):
-		self.weight      = np.ones((c,1),dtype=np.float32)
-		self.data        = data
-		self.class_data  = class_data
+	def __init__(self,c,data_length):
+		self.weight      = np.ones((c,data_length),dtype=np.float32)
 
 	# to calculate g(x) = wx
 	def g_x(self,i,p,input_data):
@@ -51,7 +49,7 @@ class WH():
 				for i in range(len(self.weight)):
 					loss_all += self.loss(i,p,data,class_data)
 					differentiate_loss = self.differential_calculus(i,p,data,class_data)
-				
+					print self.g_x(i,p,data)
 					if tmp > self.g_x(i,p,data):
 						arg_max = i+1
 						tmp = self.g_x(i,p,data)
@@ -67,7 +65,8 @@ class WH():
 
 class file_operator():
 	def __init__(self,filename):
-		self.__data        = np.genfromtxt(filename,delimiter=",",dtype=np.float32,usecols=(0))
+		data        = np.genfromtxt(filename,delimiter=",",dtype=np.float32,usecols=(0))
+		self.__data = np.c_[np.ones(len(data),dtype=np.float32),data]
 		self.__class_data  = np.genfromtxt(filename,delimiter=",",dtype=np.float32,usecols=(1))
 
 	def getData(self):
@@ -76,5 +75,5 @@ class file_operator():
 if __name__ == "__main__":
 	fo = file_operator("class.data")
 	data,class_data = fo.getData()
-	wh = WH(3,data,class_data)
+	wh = WH(3,len(data[0]))
 	wh.learning_loop(data,class_data)
