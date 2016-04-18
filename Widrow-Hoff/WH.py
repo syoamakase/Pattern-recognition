@@ -6,9 +6,11 @@ import numpy as np
 # ρ
 ROW = 0.001 
 
+# max learning epoch
 EPOCH = 100 
 
 class WH():
+	# c means weight length
 	def __init__(self,c,data,class_data):
 		self.weight      = np.ones((c,1),dtype=np.float32)
 		self.data        = data
@@ -37,6 +39,7 @@ class WH():
 		# w' = w - ρεx
 		self.weight[i] = self.weight[i] - (ROW*differentiate_loss[p])
 
+	# to start learning
 	def learning_loop(self,data,class_data):
 		
 		for loop in range(EPOCH):
@@ -59,7 +62,7 @@ class WH():
 		for p in range(len(data)):
 			print("input : {}".format(data[p]))
 			for i in range(len(self.weight)):
-				print("weight{} : {}".format(i,self.g_x(i,p,data))) 			
+				print("g_{}_{} : {}".format(i,p,self.g_x(i,p,data))) 			
 
 
 class file_operator():
