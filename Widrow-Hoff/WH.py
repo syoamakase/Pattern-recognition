@@ -2,16 +2,15 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import copy
 
 # ρ
 ROW = 0.001 
 
-EPOCH = 10 
+EPOCH = 100 
 
 class WH():
 	def __init__(self,c,data,class_data):
-		self.weight      = np.ones((c,len(data[0])),dtype=np.float32)
+		self.weight      = np.ones((c,1),dtype=np.float32)
 		self.data        = data
 		self.class_data  = class_data
 
@@ -44,19 +43,29 @@ class WH():
 			print("epoch : {}".format(loop))
 			loss_all = 0
 			for p in range(len(data)):
+				max_arg = 0
+				tmp = float("inf")
 				for i in range(len(self.weight)):
 					loss_all += self.loss(i,p,data,class_data)
 					differentiate_loss = self.differential_calculus(i,p,data,class_data)
-					self.error_correction(i,p,differentiate_loss,data)
-					print(self.g_x(i,p,data))
-				#print("loss : {}".format(loss_all))
-			#print(self.weight) 			
+				
+					if tmp > self.g_x(i,p,data):
+						arg_max = i+1
+						tmp = self.g_x(i,p,data)
+				if arg_max != class_data[p]:
+					self.error_correction(class_data[p]-1,p,differentiate_loss,data)
+					#print(self.g_x(i,p,data))
+			#print(self.weight)
+		for p in range(len(data)):
+			print("input : {}".format(data[p]))
+			for i in range(len(self.weight)):
+				print("weight{} : {}".format(i,self.g_x(i,p,data))) 			
 
 
 class file_operator():
 	def __init__(self,filename):
-		self.__data        = np.loadtxt(filename,delimiter=",",usecols=(0,1,2))
-		self.__class_data  = np.genfromtxt(filename,delimiter=",",dtype=np.float32,usecols=(3))
+		self.__data        = np.genfromtxt(filename,delimiter=",",dtype=np.float32,usecols=(0))
+		self.__class_data  = np.genfromtxt(filename,delimiter=",",dtype=np.float32,usecols=(1))
 
 	def getData(self):
 		return self.__data, self.__class_data
@@ -64,5 +73,5 @@ class file_operator():
 if __name__ == "__main__":
 	fo = file_operator("class.data")
 	data,class_data = fo.getData()
-	wh = WH(2,data,class_data)
+	wh = WH(3,data,class_data)
 	wh.learning_loop(data,class_data)
