@@ -7,7 +7,7 @@ import numpy as np
 ROW = 0.2 
 
 ## max learning epoch
-EPOCH = 1
+EPOCH = 10
 
 class WH():
 	## c means weight length
@@ -21,9 +21,12 @@ class WH():
 		return gxp
 
 	## sum_of_squares 
-	def loss(self,p,input_data,superviser):
-		
-		loss = (((self.g_x(i,p,input_data) - superviser[p])**2).sum())/2
+	def loss(self,p,input_data,class_data):
+		superviser = np.zeros((len(self.weight)),dtype=np.int32)
+		loss       = np.zeros((len(self.weight),len(self.weight[0])),dtype=np.float32)
+		superviser[class_data[p]-1] = 1
+		for i in range(len(self.weight)):
+			loss[i] = (((self.g_x(i,p,input_data) - superviser[i])**2))/2
 
 		return loss
 
@@ -33,7 +36,6 @@ class WH():
 		superviser = np.zeros((len(self.weight)),dtype=np.int32)
 		differentiate_loss = np.zeros((len(self.weight),len(self.weight[0])),dtype=np.float32)
 		superviser[class_data[p]-1] = 1 
-		print(input_data[p])
 		for i in range(len(self.weight)):
 			differentiate_loss[i] = ((self.g_x(i,p,input_data) - superviser[i])*input_data[p])
 	
@@ -54,6 +56,8 @@ class WH():
 			## data loop
 			for p in range(len(data)):
 				## g(x) loop
+				if p == 0:
+					print("loss {}".format(self.loss(p,data,class_data)))
 				differentiate_loss = self.differential_calculus(p,data,class_data)
 				self.error_correction(p,differentiate_loss,data)
 		
@@ -61,7 +65,7 @@ class WH():
 			print("data: {} class : {} ".format(d+1,class_data[d]))
 			print(self.g_x(0,d,data))
 			print(self.g_x(1,d,data))
-			print(self.g_x(2,d,data))	
+			print(self.g_x(2,d,data))
 		print(self.weight)
 
 
@@ -78,6 +82,5 @@ class file_operator():
 if __name__ == "__main__":
 	fo = file_operator("class.data")
 	data,class_data = fo.getData()
-	print len(data[0])
 	wh = WH(3,len(data[0]))
 	wh.learning_loop(data,class_data)
