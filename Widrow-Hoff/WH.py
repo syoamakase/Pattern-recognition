@@ -7,7 +7,7 @@ import numpy as np
 ROW = 0.2 
 
 ## max learning epoch
-EPOCH = 10
+EPOCH = 20
 
 class WH():
 	## c means weight length
@@ -41,11 +41,19 @@ class WH():
 	
 		return differentiate_loss
 
-	def error_correction(self,p,differentiate_loss,input_data):
+	def error_correction(self,p,differentiate_loss,judge,input_data,class_data):
 		## w' = w - ρεx
+		if judge != class_data[p]-1:
+			for i in range(len(self.weight)):
+				self.weight[i] = self.weight[i] - (ROW*differentiate_loss[i])
+	
+	def error_judgement(self,p,input_data):
+		max_arg = 0
+		gx_list = np.zeros((len(self.weight),),dtype=np.float32)
 		for i in range(len(self.weight)):
-			self.weight[i] = self.weight[i] - (ROW*differentiate_loss[i])
+			gx_list[i] = self.g_x(i,p,input_data)
 
+		return gx_list.argmax()
 
 	# to start learning
 	def learning_loop(self,data,class_data):
@@ -56,10 +64,9 @@ class WH():
 			## data loop
 			for p in range(len(data)):
 				## g(x) loop
-				if p == 0:
-					print("loss {}".format(self.loss(p,data,class_data)))
 				differentiate_loss = self.differential_calculus(p,data,class_data)
-				self.error_correction(p,differentiate_loss,data)
+				judge = self.error_judgement(p,data)
+				self.error_correction(p,differentiate_loss,judge,data,class_data)
 		
 		for d in range(len(data)): 	
 			print("data: {} class : {} ".format(d+1,class_data[d]))
