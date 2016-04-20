@@ -30,8 +30,7 @@ class WH():
 
 		return loss
 
-	## differentiate loss
-	## ∂J/∂w
+	## differentiate loss = ∂J/∂w
 	def differential_calculus(self,p,input_data,class_data):
 		superviser = np.zeros((len(self.weight)),dtype=np.int32)
 		differentiate_loss = np.zeros((len(self.weight),len(self.weight[0])),dtype=np.float32)
@@ -40,13 +39,14 @@ class WH():
 			differentiate_loss[i] = ((self.g_x(i,p,input_data) - superviser[i])*input_data[p])
 	
 		return differentiate_loss
-
-	def error_correction(self,p,differentiate_loss,judge,input_data,class_data):
+	
+	def weight_update(self,p,differentiate_loss,judge,input_data,class_data):
 		## w' = w - ρεx
-		if judge != class_data[p]-1:
+		if judge != (class_data[p]-1):
 			for i in range(len(self.weight)):
 				self.weight[i] = self.weight[i] - (ROW*differentiate_loss[i])
 	
+
 	def error_judgement(self,p,input_data):
 		max_arg = 0
 		gx_list = np.zeros((len(self.weight),),dtype=np.float32)
@@ -66,14 +66,8 @@ class WH():
 				## g(x) loop
 				differentiate_loss = self.differential_calculus(p,data,class_data)
 				judge = self.error_judgement(p,data)
-				self.error_correction(p,differentiate_loss,judge,data,class_data)
+				self.weight_update(p,differentiate_loss,judge,data,class_data)
 		
-		for d in range(len(data)): 	
-			print("data: {} class : {} ".format(d+1,class_data[d]))
-			print(self.g_x(0,d,data))
-			print(self.g_x(1,d,data))
-			print(self.g_x(2,d,data))
-		print(self.weight)
 
 
 class file_operator():

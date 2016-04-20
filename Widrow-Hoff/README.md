@@ -1,0 +1,2 @@
+# Widrow-Hofflearning rule
+
