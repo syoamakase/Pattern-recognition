@@ -11,7 +11,7 @@ When you use python2,
 
 `pip install -r requirements.txt`
 
-This program is recommend <mark>2.7.9</mark> or <mark>3.5.1</mark> about python version.
+This program is recommend **2.7.9** or **3.5.1** about python version.
 
 If you use pyenv and virtualenv, perhaps images don't display.
 

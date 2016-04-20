@@ -21,7 +21,7 @@ class NN():
 	#ranking data
 	## Note: define minimum distance as top
 	def ranking(self,input_data,class_name):
-		print "class: {}".format(class_name)
+		print("class: {}".format(class_name))
 		distance = np.zeros((len(self.__data),),dtype=np.float32)
 		for i in range(len(self.__data)):
 			distance[i] = self.calc_D(self.__data[i],input_data)
@@ -30,9 +30,11 @@ class NN():
 
 	#to use k-NN (k>1)
 	def voting(self,distance):
-		for rank in xrange(0,self.__kNN):
+		for rank in range(0,self.__kNN):
 			arg_num = np.argmin(distance)
-			print "rank: {} arg: {} class: {} distance: {}".format(rank+1,arg_num,self.__class_data[arg_num],distance[arg_num])
+			print("rank: {} arg: {} class: {} distance: {}".format(
+				rank+1,arg_num,self.__class_data[arg_num],distance[arg_num]))
+			
 			distance[arg_num] = float("inf")
 
 
@@ -48,7 +50,7 @@ class file_operator():
 
 
 if __name__== "__main__":
-	print "dataload"
+	print("dataload")
 	fope       = file_operator("iris.data")
 	data,class_data = fope.getData()
 	nN = NN(51,data,class_data) 
