@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
-import numpy as np
 import copy
 import matplotlib.pyplot as plt
+import numpy as np
 
 # to define ρ in w' = w + ρ*x
 ROW = 0.03
@@ -17,9 +17,7 @@ CORRECT      = 0
 #Discriminant function rule
 class DF():
     #define k-NN(default is 1-NN)
-    def __init__(self,data,class_data):
-        self.data          = data
-        self.class_data    = class_data
+    def __init__(self):
         #initialize weight
         self.weight        = np.array((1,1),dtype=np.float32)
 
@@ -33,7 +31,7 @@ class DF():
         
         return judge
     
-    def error_correction(self,error_id,input_data):
+    def weight_update(self,error_id,input_data):
         global ROW
         if error_id == CLASS_1_MISS:
             self.weight += ROW*input_data
@@ -55,9 +53,8 @@ class DF():
             for i in range(len(data)):
                 judge =  self.g_x(data[i])
                 error_id = self.error_judgement(judge,class_data[i])
-                self.error_correction(error_id,data[i])
+                self.weight_update(error_id,data[i])
                 if np.all(self.weight == prev_weight) == False:
-                    #print("judge : {} class : {}".format(judge,class_data[i]))
                     print("weight: {}".format(self.weight))
                     prev_weight = copy.deepcopy(self.weight)
                     graph.graph_gen(self.weight)
@@ -91,5 +88,5 @@ if __name__== "__main__":
     fope = file_operator("2_class.data")
     data,class_data = fope.getData()
     print("learning start")
-    df = DF(data,class_data)
+    df = DF()
     df.learning_loop(data,class_data)
