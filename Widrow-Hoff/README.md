@@ -10,9 +10,9 @@ border 1 to 2 is **0.7**.
 
 ex)
 
-> -1.5 => class 3
-> -0.2 => class 2
->  0.8 => class 1
+> -1.5 => class 3   
+> -0.2 => class 2   
+>  0.8 => class 1   
 
 
 ## note
