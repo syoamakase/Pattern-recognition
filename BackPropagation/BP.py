@@ -17,7 +17,7 @@ class BP():
 
     # actiocating function - sigmoid
     def sigmoid(self,gjp):
-        return 1/(a+np.exp(-1*gjp))
+        return 1/(1+np.exp(-1*gjp))
 
     # activationg function - tanhx
     def tanh(self,gjp):
