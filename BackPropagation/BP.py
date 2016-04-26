@@ -12,11 +12,13 @@ Networks = {
     'output_layer'  : 3
 }
 
+np.random.seed(1)
+
 ## ρ
 ROW = 0.2
 
 ## max learning epoch
-EPOCH = 25
+EPOCH = 1 
 
 ## load file name
 FILENAME="class.data"
@@ -30,8 +32,9 @@ class MyError(Exception):
 
 
 class BP():
-    def __init__(self,net):
+    def __init__(self,net,nonlinear="sigmoid"):
         weight = []
+        self.nonlinear=nonlinear
         self.num_of_layer = net['num_of_layer']
         try :
             if self.num_of_layer != len(net)-1:
@@ -41,7 +44,6 @@ class BP():
             print(e)
 
         for h in range(self.num_of_layer-1):
-            print h==self.num_of_layer-2
             if h == 0:
                 w = np.random.rand(net['hidden_layer{}'.format(h+1)],net['input_layer'])
                 weight.append(w)
@@ -58,10 +60,9 @@ class BP():
 
     # output unit j for input i
     def h_j_p(self,l,input_data):
-        hjp = np.zeros((len(selg.weight[l]),),dtype=np.float32)
-        for j in range(len(self.weight[l])):
-            for i in range(len(self.weight[l-1])):
-                hjp[j] = (self.weight[l-1][j]*input_data).sum()
+        hjp = np.zeros((len(self.weight[l]),),dtype=np.float32)
+        for j in range(len(hjp)):
+            hjp[j] = (self.weight[l][j]*input_data).sum()
         
         return hjp
 
@@ -69,16 +70,23 @@ class BP():
     def sigmoid(self,gjp):
         return 1/(1+np.exp(-1*gjp))
 
+    def sigmoid_dash(self,gjp):
+        return gjp*(1-gjp)
+
     # activationg function - tanhx
     def tanh(self,hjp):
         return (np.exp(gjp)-np.exp(-1*gjp))/(np.exp(gjp)+np.exp(-1*gjp))
 
+    def tanh_dash(self,gjp):
+        return 1-gjp**2
+    
     # add nonlinear function to hjp 
     def g_j_p(self,l,input_data):
         # Now it uses sigmoid
-
-        return self.sigmoid(self.h_j_p(l,input_data))
-        #return self.tanh(self.h_j_p(j,p,input_data))
+        if self.nonlinear == "tanh":
+            return self.tanh(self.h_j_p(j,p,input_data))
+        else:
+            return self.sigmoid(self.h_j_p(l,input_data))
 
     # Jp
     def squared_error(self,p,input_data,class_data):
@@ -88,16 +96,17 @@ class BP():
         pass
 
     def error_judgement(self,data):
-        return data.argmax()
+        pass 
 
     def learning_loop(self,input_data,class_data):
         for epoch in range(EPOCH):
             for p in range(len(input_data)):
                 data = input_data[p]
-                for l in range(self.num_of_layer):
+                for l in range(0,len(self.weight)):
+                    print data
                     data = self.g_j_p(l,data)
-                judge = error_judgement(data)
-
+                judge = data.argmax()
+                print data
 
 class file_operator():
     def __init__(self,filename):
