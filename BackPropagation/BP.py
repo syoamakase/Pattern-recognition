@@ -15,10 +15,10 @@ Networks = {
 np.random.seed(1)
 
 ## ρ
-ROW = 0.2
+ROW = 0.005
 
 ## max learning epoch
-EPOCH = 1 
+EPOCH = 100 
 
 ## load file name
 FILENAME="class.data"
@@ -35,6 +35,7 @@ class BP():
     def __init__(self,net,nonlinear="sigmoid"):
         weight = []
         self.nonlinear=nonlinear
+        self.net = net
         self.num_of_layer = net['num_of_layer']
         try :
             if self.num_of_layer != len(net)-1:
@@ -74,7 +75,7 @@ class BP():
         return gjp*(1-gjp)
 
     # activationg function - tanhx
-    def tanh(self,hjp):
+    def tanh(self,gjp):
         return (np.exp(gjp)-np.exp(-1*gjp))/(np.exp(gjp)+np.exp(-1*gjp))
 
     def tanh_dash(self,gjp):
@@ -92,8 +93,33 @@ class BP():
     def squared_error(self,p,input_data,class_data):
         pass
 
-    def weight_update(self,l,p,judge,class_data):
-        pass
+    ### 'judge' may not use ###
+    def back_propagation(self,l,p,judge,class_data,gjp,epsilon_kp=None):
+        if l==self.num_of_layer-2:
+            superviser = np.zeros(3,dtype=np.int32)
+            superviser_arg = int(class_data[p]-1)
+            superviser[superviser_arg] = 1
+            epsilon_jp = (gjp[l]-superviser)*self.sigmoid_dash(gjp[l])
+            for j in range(self.net['output_layer']):
+                self.weight[l][j] = self.weight[l][j] - ROW*epsilon_jp[j]*gjp[l][j]
+            
+            self.back_propagation(l-1,p,judge,class_data,gjp,epsilon_jp)
+        
+        elif l<0:
+            return
+
+        else:
+            dJp_dgjp = (epsilon_kp*self.weight[l+1].T).sum()
+            epsilon_jp = dJp_dgjp*self.sigmoid_dash(gjp[l])
+
+            #self.weight[l] = self.weight[l] - ROW*epsilpm_jp*gjp[l]if judge != class_data[p]:
+            for j in range(4):
+                self.weight[l][j] = self.weight[l][j] - ROW*epsilon_jp[j]*gjp[l][j]
+
+
+            self.back_propagation(l-1,p,judge,class_data,gjp,epsilon_jp)
+
+
 
     def error_judgement(self,data):
         pass 
@@ -102,11 +128,14 @@ class BP():
         for epoch in range(EPOCH):
             for p in range(len(input_data)):
                 data = input_data[p]
+                gjp_list = []
                 for l in range(0,len(self.weight)):
-                    print data
                     data = self.g_j_p(l,data)
+                    gjp_list.append(data)
+                gjp = np.array(gjp_list)
                 judge = data.argmax()
-                print data
+                self.back_propagation(self.num_of_layer-2,p,judge,class_data,gjp)
+
 
 class file_operator():
     def __init__(self,filename):
