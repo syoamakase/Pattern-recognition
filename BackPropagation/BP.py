@@ -74,21 +74,30 @@ class BP():
         return (np.exp(gjp)-np.exp(-1*gjp))/(np.exp(gjp)+np.exp(-1*gjp))
 
     # add nonlinear function to hjp 
-    def g_j_p(self,j,p,input_data):
+    def g_j_p(self,l,input_data):
         # Now it uses sigmoid
 
-        return self.sigmoid(self.h_j_p(j,p,input_data))
+        return self.sigmoid(self.h_j_p(l,input_data))
         #return self.tanh(self.h_j_p(j,p,input_data))
 
     # Jp
     def squared_error(self,p,input_data,class_data):
         pass
 
-    def weight_update(self):
+    def weight_update(self,l,p,judge,class_data):
         pass
 
+    def error_judgement(self,data):
+        return data.argmax()
+
     def learning_loop(self,input_data,class_data):
-        pass
+        for epoch in range(EPOCH):
+            for p in range(len(input_data)):
+                data = input_data[p]
+                for l in range(self.num_of_layer):
+                    data = self.g_j_p(l,data)
+                judge = error_judgement(data)
+
 
 class file_operator():
     def __init__(self,filename):

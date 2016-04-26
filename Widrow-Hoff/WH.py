@@ -48,7 +48,6 @@ class WH():
     
 
     def error_judgement(self,p,input_data):
-        max_arg = 0
         gx_list = np.zeros((len(self.weight),),dtype=np.float32)
         for i in range(len(self.weight)):
             gx_list[i] = self.g_x(i,p,input_data)
