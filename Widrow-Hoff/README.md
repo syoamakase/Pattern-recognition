@@ -23,4 +23,4 @@ You can change `ROW` as well when you want to change parameters.
 
 So, perhaps result is not the same perfectly when you run before.
 
-If you want to get the same results, add `seed(100)` in main.
+If you want to get the same results, add `np.random.seed(100)` in main.
