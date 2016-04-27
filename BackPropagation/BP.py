@@ -15,7 +15,7 @@ Networks = {
 np.random.seed(1)
 
 ## ρ
-ROW = 0.005
+ROW = 0.02
 
 ## max learning epoch
 EPOCH = 100 
@@ -85,7 +85,7 @@ class BP():
     def g_j_p(self,l,input_data):
         # Now it uses sigmoid
         if self.nonlinear == "tanh":
-            return self.tanh(self.h_j_p(j,p,input_data))
+            return self.tanh(self.h_j_p(l,p,input_data))
         else:
             return self.sigmoid(self.h_j_p(l,input_data))
 
@@ -95,26 +95,27 @@ class BP():
 
     ### 'judge' may not use ###
     def back_propagation(self,l,p,judge,class_data,gjp,epsilon_kp=None):
-        if l==self.num_of_layer-2:
+        if l==self.num_of_layer-1:
             superviser = np.zeros(3,dtype=np.int32)
             superviser_arg = int(class_data[p]-1)
             superviser[superviser_arg] = 1
             epsilon_jp = (gjp[l]-superviser)*self.sigmoid_dash(gjp[l])
             for j in range(self.net['output_layer']):
-                self.weight[l][j] = self.weight[l][j] - ROW*epsilon_jp[j]*gjp[l][j]
+                self.weight[l-1][j] = self.weight[l-1][j] - ROW*epsilon_jp[j]*gjp[l-1]
             
             self.back_propagation(l-1,p,judge,class_data,gjp,epsilon_jp)
         
-        elif l<0:
+        elif l<=0:
             return
 
         else:
-            dJp_dgjp = (epsilon_kp*self.weight[l+1].T).sum()
+            dJp_dgjp = (epsilon_kp*self.weight[l].T).sum()
             epsilon_jp = dJp_dgjp*self.sigmoid_dash(gjp[l])
 
-            #self.weight[l] = self.weight[l] - ROW*epsilpm_jp*gjp[l]if judge != class_data[p]:
+            #self.weight[l] = self.weight[l] - ROW*epsilpm_jp*gjp[l]
+            #if judge != class_data[p]:
             for j in range(4):
-                self.weight[l][j] = self.weight[l][j] - ROW*epsilon_jp[j]*gjp[l][j]
+                self.weight[l-1][j] = self.weight[l-1][j] - ROW*epsilon_jp[j]*gjp[l-1]
 
 
             self.back_propagation(l-1,p,judge,class_data,gjp,epsilon_jp)
@@ -129,12 +130,26 @@ class BP():
             for p in range(len(input_data)):
                 data = input_data[p]
                 gjp_list = []
+                gjp_list.append(self.sigmoid(data))
                 for l in range(0,len(self.weight)):
                     data = self.g_j_p(l,data)
                     gjp_list.append(data)
                 gjp = np.array(gjp_list)
                 judge = data.argmax()
-                self.back_propagation(self.num_of_layer-2,p,judge,class_data,gjp)
+                if judge+1 != class_data[p]:
+                    self.back_propagation(self.num_of_layer-1,p,judge,class_data,gjp)
+        
+        for p in range(len(input_data)):
+            data = input_data[p]
+            gjp_list = []
+            gjp_list.append(self.sigmoid(data))
+            for l in range(0,len(self.weight)):
+                data = self.g_j_p(l,data)
+                gjp_list.append(data)
+            gjp = np.array(gjp_list)
+            judge = data.argmax()
+            print input_data[p],class_data[p]
+            print data,judge+1
 
 
 class file_operator():
