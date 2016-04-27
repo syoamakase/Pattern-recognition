@@ -9,7 +9,7 @@ Write below in your terminal(Linux or mac better)
 
 This program is recommend **2.7.9** or **3.5.1** about python version.
 
-If you use pyenv and virtualenv, perhaps images don't display.
+If you use pyenv and virtualenv, perhaps images won't display.
 
 Write below to slove this problem.
 

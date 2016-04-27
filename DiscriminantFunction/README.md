@@ -18,8 +18,9 @@ When blue line is between red line and green line, This program finishes.
 When you want to change parameters, 
 you can change `ROW = 0.03` or `self.weight((1,1),dtype=np.float32`.
 
+This program can learn just 2-class classificasion.
 
-If you want to change class data, This program can learn just 2-class classificasion.
+Please don't change this.
 
 
-**Now matplotlib says warning but I don't know why the warnings cause. **
+**Now matplotlib says warning but I don't know why the warnings cause.**
