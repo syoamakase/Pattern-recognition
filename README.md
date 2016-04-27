@@ -11,7 +11,7 @@ This program is recommend **2.7.9** or **3.5.1** about python version.
 
 If you use pyenv and virtualenv, perhaps images don't display.
 
-Write below to slove this problem.
+Write below to solve this problem.
 
 ```
 sudo apt-get install tk-dev
