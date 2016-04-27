@@ -12,13 +12,12 @@ Networks = {
     'output_layer'  : 3
 }
 
-np.random.seed(1)
 
 ## ρ
 ROW = 0.02
 
 ## max learning epoch
-EPOCH = 100 
+EPOCH = 500
 
 ## load file name
 FILENAME="class.data"
@@ -114,17 +113,13 @@ class BP():
 
             #self.weight[l] = self.weight[l] - ROW*epsilpm_jp*gjp[l]
             #if judge != class_data[p]:
-            for j in range(4):
+            for j in range(len(gjp[l])):
                 self.weight[l-1][j] = self.weight[l-1][j] - ROW*epsilon_jp[j]*gjp[l-1]
 
 
             self.back_propagation(l-1,p,judge,class_data,gjp,epsilon_jp)
 
-
-
-    def error_judgement(self,data):
-        pass 
-
+    # to start learning
     def learning_loop(self,input_data,class_data):
         for epoch in range(EPOCH):
             for p in range(len(input_data)):
