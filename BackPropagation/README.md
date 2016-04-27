@@ -2,7 +2,7 @@
 
 ## note
 
-You can edit `ROW` means ρ, `EPOCH` means how many times do it to learn,
+You can edit `ROW` means ρ, `EPOCH` means how many times it learn,
 
 and Neural Network architecture.
 
