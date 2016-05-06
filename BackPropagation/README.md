@@ -31,3 +31,19 @@ You can make the number of hidden layer.
 For example, `output_layer : 3` means output layer has three dimentsions, or 
 
 you want to classify data three.
+
+## activation function
+
+### tanh
+
+![figure_1](img/figure_1.png)
+
+
+### sigmoid
+
+![figure_2](img/figure_2.png)
+
+
+### ReLU(Rectified Linear Unit)
+
+![figure_3](img/figure_3.png)
