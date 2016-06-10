@@ -104,9 +104,9 @@ class BP():
             superviser[superviser_arg] = 1
             epsilon_jp = (gjp[l] - superviser) * self.sigmoid_dash(gjp[l])
             for j in range(self.net[l]):
-                self.weight[l-1][j] = self.weight[l-1][j] - ROW * epsilon_jp[j] * gjp[l][j]
+                self.weight[l - 1][j] = self.weight[l - 1][j] - ROW * epsilon_jp[j] * gjp[l][j]
             # recursive call
-            self.back_propagation(l-1, p, class_data, gjp, epsilon_jp)
+            self.back_propagation(l - 1, p, class_data, gjp, epsilon_jp)
 
         # finish
         elif l <= 0:
@@ -118,10 +118,10 @@ class BP():
             epsilon_jp = dJp_dgjp * self.sigmoid_dash(gjp[l])
 
             for j in range(self.net[l]):
-                self.weight[l-1][j] = self.weight[l-1][j] - ROW * epsilon_jp[j]*gjp[l][j]
+                self.weight[l - 1][j] = self.weight[l - 1][j] - ROW * epsilon_jp[j] * gjp[l][j]
 
             # recursive call
-            self.back_propagation(l-1, p, class_data, gjp, epsilon_jp)
+            self.back_propagation(l - 1, p, class_data, gjp, epsilon_jp)
 
     # to start learning
     def learning_loop(self, input_data, class_data):
@@ -137,7 +137,7 @@ class BP():
                     gjp_list.append(data)
                 gjp = np.array(gjp_list)
                 loss += self.squared_error(p, data, class_data)
-                self.back_propagation(self.num_of_layer-1, p, class_data, gjp)
+                self.back_propagation(self.num_of_layer - 1, p, class_data, gjp)
             print('loss : {}'.format(loss))
         self.print_result(input_data, class_data)
 
@@ -147,7 +147,7 @@ class file_operator():
     def __init__(self, filename, net):
         data = np.genfromtxt(filename, delimiter=",", dtype=np.float32, usecols=(0, 1, 2, 3))
         self.data = np.c_[np.ones(len(data), dtype=np.float32), data]
-        class_name = np.genfromtxt(filename, delimiter=",", dtype='|S20', usecols=(net[0]-1))
+        class_name = np.genfromtxt(filename, delimiter=",", dtype='|S20', usecols=(net[0] - 1))
         self.class_data = np.zeros(len(class_name), dtype=np.int32)
         for i in range(len(class_name)):
             self.class_data[i] = iris_data[class_name[i].decode('utf-8')]
