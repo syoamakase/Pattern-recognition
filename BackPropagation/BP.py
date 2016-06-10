@@ -5,28 +5,25 @@ import numpy as np
 
 # to define network architecture
 Networks = [
-    2,
-    4,
+    5,
+    7,
     3
 ]
 
+iris_data = {
+    'Iris-setosa': 0,
+    'Iris-versicolor': 1,
+    'Iris-virginica': 2
+}
+
 # ρ
-ROW = 0.02
+ROW = 2
 
 # max learning epoch
-EPOCH = 300
+EPOCH = 200
 
 # load file name
-FILENAME = "class.data"
-
-
-class MyError(Exception):
-
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return repr(self.value)
+FILENAME = 'iris.data'
 
 
 class BP():
@@ -36,12 +33,6 @@ class BP():
         self.net = net
         self.num_of_layer = len(net)
         self.nonlinear = nonlinear
-        try:
-            if self.num_of_layer != len(net) - 1:
-                raise MyError('invalid layer structure')
-        except MyError as e:
-            print(type(e))
-            print(e)
 
         for h in range(self.num_of_layer - 1):
             w = np.random.rand(net[h + 1], net[h])
@@ -84,9 +75,8 @@ class BP():
     # Jp
     def squared_error(self, p, data, class_data):
         superviser = np.zeros(self.net[self.num_of_layer - 1], dtype=np.int32)
-        superviser_arg = int(class_data[p] - 1)
+        superviser_arg = int(class_data[p])
         superviser[superviser_arg] = 1
-
         squared_error = (((data - superviser) ** 2).sum()) / 2
 
         return squared_error
@@ -102,7 +92,7 @@ class BP():
             judge = data.argmax()
             print("input data : {},\noutput : {}".format(input_data[p], data))
             print("\n \033[31m class : {}, prediction : {}\033[0m".format(
-                int(class_data[p]), judge + 1))
+                int(class_data[p]), judge))
             print("------------------------------")
 
     # recursive function
@@ -110,12 +100,11 @@ class BP():
         # deal with output layer
         if l == self.num_of_layer - 1:
             superviser = np.zeros(self.net[self.num_of_layer - 1], dtype=np.int32)
-            superviser_arg = int(class_data[p] - 1)
+            superviser_arg = int(class_data[p])
             superviser[superviser_arg] = 1
             epsilon_jp = (gjp[l] - superviser) * self.sigmoid_dash(gjp[l])
-            for j in range(self.net[self.num_of_layer - 1]):
-                self.weight[l-1][j] = self.weight[l-1][j] - ROW * epsilon_jp[j] * gjp[l-1]
-            
+            for j in range(self.net[l]):
+                self.weight[l-1][j] = self.weight[l-1][j] - ROW * epsilon_jp[j] * gjp[l][j]
             # recursive call
             self.back_propagation(l-1, p, class_data, gjp, epsilon_jp)
 
@@ -128,8 +117,8 @@ class BP():
             dJp_dgjp = (epsilon_kp * self.weight[l].T).sum()
             epsilon_jp = dJp_dgjp * self.sigmoid_dash(gjp[l])
 
-            for j in range(len(gjp[l])):
-                self.weight[l-1][j] = self.weight[l-1][j] - ROW * epsilon_jp[j]*gjp[l-1]
+            for j in range(self.net[l]):
+                self.weight[l-1][j] = self.weight[l-1][j] - ROW * epsilon_jp[j]*gjp[l][j]
 
             # recursive call
             self.back_propagation(l-1, p, class_data, gjp, epsilon_jp)
@@ -142,29 +131,30 @@ class BP():
             for p in range(len(input_data)):
                 data = input_data[p]
                 gjp_list = []
-                gjp_list.append(self.sigmoid(data))
+                gjp_list.append(data)
                 for l in range(0, len(self.weight)):
                     data = self.g_j_p(l, data)
                     gjp_list.append(data)
                 gjp = np.array(gjp_list)
-                judge = data.argmax()
                 loss += self.squared_error(p, data, class_data)
-                if (judge + 1) != class_data[p]:
-                    self.back_propagation(self.num_of_layer-1, p, class_data, gjp)
+                self.back_propagation(self.num_of_layer-1, p, class_data, gjp)
             print('loss : {}'.format(loss))
         self.print_result(input_data, class_data)
 
 
 class file_operator():
 
-    def __init__(self, filename):
-        data = np.genfromtxt(filename, delimiter=",", dtype=np.float32, usecols=(0))
+    def __init__(self, filename, net):
+        data = np.genfromtxt(filename, delimiter=",", dtype=np.float32, usecols=(0, 1, 2, 3))
         self.data = np.c_[np.ones(len(data), dtype=np.float32), data]
-        self.class_data = np.genfromtxt(filename, delimiter=",", dtype=np.float32, usecols=(1))
+        class_name = np.genfromtxt(filename, delimiter=",", dtype='|S20', usecols=(net[0]-1))
+        self.class_data = np.zeros(len(class_name), dtype=np.int32)
+        for i in range(len(class_name)):
+            self.class_data[i] = iris_data[class_name[i].decode('utf-8')]
 
 
 if __name__ == "__main__":
-    fo = file_operator(FILENAME)
+    fo = file_operator(FILENAME, Networks)
     data = fo.data
     class_data = fo.class_data
     bp = BP(Networks)
